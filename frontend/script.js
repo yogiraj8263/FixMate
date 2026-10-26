@@ -1,7 +1,7 @@
 
-// ===============================
+// =====================================
 // FIXMATE - MOBILE NAVIGATION
-// ===============================
+// =====================================
 
 const menuToggle = document.querySelector("#menuToggle");
 const navigation = document.querySelector("#navigation");
@@ -37,9 +37,9 @@ if (menuToggle && navigation) {
   });
 }
 
-// ===============================
+// =====================================
 // FIXMATE - SERVICE SELECTION
-// ===============================
+// =====================================
 
 const serviceSelect = document.querySelector("#service");
 
@@ -47,41 +47,40 @@ document.querySelectorAll("[data-service]").forEach((link) => {
   link.addEventListener("click", () => {
     if (!serviceSelect) return;
 
-    const requestedService = link.dataset.service.toLowerCase();
+    const requestedService = (link.dataset.service || "").toLowerCase();
 
-    const matchingOption = [...serviceSelect.options].find(
-      (option) =>
-        option.value.toLowerCase() === requestedService ||
-        option.textContent.trim().toLowerCase() === requestedService
+    const option = [...serviceSelect.options].find(
+      (item) =>
+        item.value.toLowerCase() === requestedService ||
+        item.textContent.trim().toLowerCase() === requestedService
     );
 
-    if (matchingOption) {
-      serviceSelect.value = matchingOption.value;
-    }
+    if (option) serviceSelect.value = option.value;
   });
 });
-
-// Example: index.html?service=Plumbing#booking
 
 const queryService = new URLSearchParams(
   window.location.search
 ).get("service");
 
 if (queryService && serviceSelect) {
-  const matchingOption = [...serviceSelect.options].find(
-    (option) =>
-      option.value.toLowerCase() === queryService.toLowerCase() ||
-      option.textContent.trim().toLowerCase() === queryService.toLowerCase()
+  const option = [...serviceSelect.options].find(
+    (item) =>
+      item.value.toLowerCase() === queryService.toLowerCase() ||
+      item.textContent.trim().toLowerCase() === queryService.toLowerCase()
   );
 
-  if (matchingOption) {
-    serviceSelect.value = matchingOption.value;
-  }
+  if (option) serviceSelect.value = option.value;
 }
 
-// ===============================
-// FIXMATE - BOOKING FORM
-// ===============================
+// =====================================
+// FIXMATE - WHATSAPP BOOKING
+// =====================================
+
+// Replace this placeholder with your WhatsApp number.
+// Use country code + number, digits only.
+// Example format for India: 919876543210
+const FIXMATE_WHATSAPP_NUMBER = "918263952283";
 
 const bookingForm = document.querySelector("#bookingForm");
 const formMessage = document.querySelector("#formMessage");
@@ -114,10 +113,11 @@ if (bookingForm) {
       formData.get("details") || ""
     ).trim();
 
-    const showMessage = (message, color) => {
-      if (!formMessage) return;
-      formMessage.textContent = message;
-      formMessage.style.color = color;
+    const showMessage = (message, color = "#183b2e") => {
+      if (formMessage) {
+        formMessage.textContent = message;
+        formMessage.style.color = color;
+      }
     };
 
     if (!customerName || !phone || !service || !address) {
@@ -125,7 +125,6 @@ if (bookingForm) {
       return;
     }
 
-    // Indian mobile number validation.
     const normalizedPhone = phone.replace(/[\s()-]/g, "");
 
     if (!/^(?:\+91)?[6-9]\d{9}$/.test(normalizedPhone)) {
@@ -138,28 +137,41 @@ if (bookingForm) {
       return;
     }
 
-    const bookingRequest = {
-      customerName,
-      phone: normalizedPhone,
-      service,
-      address,
-      details,
-      createdAt: new Date().toISOString()
-    };
+    if (!/^91\d{10}$/.test(FIXMATE_WHATSAPP_NUMBER)) {
+      showMessage(
+        "WhatsApp booking is not configured yet. Please set the FixMate WhatsApp number in script.js.",
+        "#b42318"
+      );
+      return;
+    }
 
-    console.log("FixMate booking request:", bookingRequest);
+    const message = [
+      "Hello FixMate! I would like to request a home service.",
+      "",
+      `Name: ${customerName}`,
+      `Customer phone: ${normalizedPhone}`,
+      `Service: ${service}`,
+      `Address: ${address}`,
+      `Issue details: ${details || "Not provided"}`,
+      "",
+      "Please contact me to confirm availability and pricing."
+    ].join("\n");
 
-    // Booking is validated, but is not yet saved to a server.
+    const whatsappURL =
+      `https://wa.me/${FIXMATE_WHATSAPP_NUMBER}` +
+      `?text=${encodeURIComponent(message)}`;
+
     showMessage(
-      `Thank you, ${customerName}! Your details are valid. Online booking is not connected yet.`,
-      "#183b2e"
+      "Opening WhatsApp with your booking details. Please review and send the message to complete your request."
     );
+
+    window.open(whatsappURL, "_blank", "noopener,noreferrer");
   });
 }
 
-// ===============================
+// =====================================
 // FIXMATE - CURRENT YEAR
-// ===============================
+// =====================================
 
 const currentYear = document.querySelector("#currentYear");
 
