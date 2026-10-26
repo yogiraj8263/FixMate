@@ -37,35 +37,35 @@ if (menuToggle && navigation) {
   });
 }
 
-
+// ===============================
 // FIXMATE - SERVICE SELECTION
-
+// ===============================
 
 const serviceSelect = document.querySelector("#service");
 
 document.querySelectorAll("[data-service]").forEach((link) => {
   link.addEventListener("click", () => {
-    if (serviceSelect) {
-      const requestedService = link.dataset.service;
+    if (!serviceSelect) return;
 
-      const matchingOption = [...serviceSelect.options].find(
-        (option) =>
-          option.value.toLowerCase() === requestedService.toLowerCase() ||
-          option.textContent.trim().toLowerCase() ===
-            requestedService.toLowerCase()
-      );
+    const requestedService = link.dataset.service.toLowerCase();
 
-      if (matchingOption) {
-        serviceSelect.value = matchingOption.value;
-      }
+    const matchingOption = [...serviceSelect.options].find(
+      (option) =>
+        option.value.toLowerCase() === requestedService ||
+        option.textContent.trim().toLowerCase() === requestedService
+    );
+
+    if (matchingOption) {
+      serviceSelect.value = matchingOption.value;
     }
   });
 });
 
-// Select a service from URL, for example:
-// index.html?service=Plumbing#booking
+// Example: index.html?service=Plumbing#booking
 
-const queryService = new URLSearchParams(window.location.search).get("service");
+const queryService = new URLSearchParams(
+  window.location.search
+).get("service");
 
 if (queryService && serviceSelect) {
   const matchingOption = [...serviceSelect.options].find(
@@ -79,9 +79,9 @@ if (queryService && serviceSelect) {
   }
 }
 
-
+// ===============================
 // FIXMATE - BOOKING FORM
-
+// ===============================
 
 const bookingForm = document.querySelector("#bookingForm");
 const formMessage = document.querySelector("#formMessage");
@@ -90,9 +90,7 @@ if (bookingForm) {
   bookingForm.addEventListener("submit", (event) => {
     event.preventDefault();
 
-    if (!bookingForm.reportValidity()) {
-      return;
-    }
+    if (!bookingForm.reportValidity()) return;
 
     const formData = new FormData(bookingForm);
 
@@ -100,77 +98,62 @@ if (bookingForm) {
       formData.get("customerName") || ""
     ).trim();
 
-    const phone = String(formData.get("phone") || "").trim();
+    const phone = String(
+      formData.get("phone") || ""
+    ).trim();
 
-    const service = String(formData.get("service") || "").trim();
+    const service = String(
+      formData.get("service") || ""
+    ).trim();
 
-    const address = String(formData.get("address") || "").trim();
+    const address = String(
+      formData.get("address") || ""
+    ).trim();
 
-    const details = String(formData.get("details") || "").trim();
+    const details = String(
+      formData.get("details") || ""
+    ).trim();
+
+    const showMessage = (message, color) => {
+      if (!formMessage) return;
+      formMessage.textContent = message;
+      formMessage.style.color = color;
+    };
 
     if (!customerName || !phone || !service || !address) {
-      if (formMessage) {
-        formMessage.textContent =
-          "Please fill in all required fields.";
-
-        formMessage.style.color = "#b42318";
-      }
-
+      showMessage("Please fill in all required fields.", "#b42318");
       return;
     }
 
-    // Basic phone-number validation for India.
+    // Indian mobile number validation.
     const normalizedPhone = phone.replace(/[\s()-]/g, "");
 
     if (!/^(?:\+91)?[6-9]\d{9}$/.test(normalizedPhone)) {
-      if (formMessage) {
-        formMessage.textContent =
-          "Please enter a valid 10-digit Indian mobile number.";
-
-        formMessage.style.color = "#b42318";
-      }
+      showMessage(
+        "Please enter a valid 10-digit Indian mobile number.",
+        "#b42318"
+      );
 
       document.querySelector("#phone")?.focus();
       return;
     }
 
-    // Prevent duplicate clicks while displaying the result.
-    const submitButton = bookingForm.querySelector(
-      'button[type="submit"]'
-    );
-
-    if (submitButton) {
-      submitButton.disabled = true;
-      submitButton.style.opacity = "0.7";
-      submitButton.style.cursor = "wait";
-    }
-
-    if (formMessage) {
-      formMessage.textContent =
-        `Thank you, ${customerName}! Your details are ready, but online booking is not connected to the server yet.`;
-
-      formMessage.style.color = "#183b2e";
-    }
-
-    // Keep the entered details available for future backend integration.
     const bookingRequest = {
       customerName,
-      phone,
+      phone: normalizedPhone,
       service,
       address,
       details,
       createdAt: new Date().toISOString()
     };
 
-    console.log("FixMate booking form validated:", bookingRequest);
+    console.log("FixMate booking request:", bookingRequest);
 
-    // No server request is sent by this code yet.
-    // Re-enable the button so the user can submit again if needed.
-    if (submitButton) {
-      submitButton.disabled = false;
-      submitButton.style.opacity = "";
-      submitButton.style.cursor = "";
-    }
+    // Booking is validated, but is not yet saved to a server.
+    showMessage(
+      `Thank you, ${customerName}! Your details are valid. Online booking is not connected yet.`,
+      "#183b2e"
+    );
   });
 }
 
