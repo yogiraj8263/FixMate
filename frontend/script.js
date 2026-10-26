@@ -1,4 +1,6 @@
 
+"use strict";
+
 // =====================================
 // FIXMATE - MOBILE NAVIGATION
 // =====================================
@@ -43,19 +45,23 @@ if (menuToggle && navigation) {
 
 const serviceSelect = document.querySelector("#service");
 
+function selectService(requestedService) {
+  if (!serviceSelect || !requestedService) return;
+
+  const requested = requestedService.trim().toLowerCase();
+
+  const option = [...serviceSelect.options].find(
+    (item) =>
+      item.value.trim().toLowerCase() === requested ||
+      item.textContent.trim().toLowerCase() === requested
+  );
+
+  if (option) serviceSelect.value = option.value;
+}
+
 document.querySelectorAll("[data-service]").forEach((link) => {
   link.addEventListener("click", () => {
-    if (!serviceSelect) return;
-
-    const requestedService = (link.dataset.service || "").toLowerCase();
-
-    const option = [...serviceSelect.options].find(
-      (item) =>
-        item.value.toLowerCase() === requestedService ||
-        item.textContent.trim().toLowerCase() === requestedService
-    );
-
-    if (option) serviceSelect.value = option.value;
+    selectService(link.dataset.service);
   });
 });
 
@@ -63,72 +69,78 @@ const queryService = new URLSearchParams(
   window.location.search
 ).get("service");
 
-if (queryService && serviceSelect) {
-  const option = [...serviceSelect.options].find(
-    (item) =>
-      item.value.toLowerCase() === queryService.toLowerCase() ||
-      item.textContent.trim().toLowerCase() === queryService.toLowerCase()
-  );
-
-  if (option) serviceSelect.value = option.value;
+if (queryService) {
+  selectService(queryService);
 }
 
 // =====================================
-// FIXMATE - WHATSAPP BOOKING
+// FIXMATE - BOOKING CONFIGURATION
 // =====================================
 
-// Replace this placeholder with your WhatsApp number.
-// Use country code + number, digits only.
-// Example format for India: 919876543210
+// India country code + mobile number, digits only.
 const FIXMATE_WHATSAPP_NUMBER = "918263952283";
+
+// Local backend address for development.
+// Keep the Node.js backend running while testing.
+const FIXMATE_API_URL = "http://localhost:5000/api/bookings";
 
 const bookingForm = document.querySelector("#bookingForm");
 const formMessage = document.querySelector("#formMessage");
 
+function showBookingMessage(message, color = "#183b2e") {
+  if (formMessage) {
+    formMessage.textContent = message;
+    formMessage.style.color = color;
+  }
+}
+
+// =====================================
+// FIXMATE - SAVE BOOKING + WHATSAPP
+// =====================================
+
 if (bookingForm) {
-  bookingForm.addEventListener("submit", (event) => {
+  bookingForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (!bookingForm.reportValidity()) return;
 
+    const submitButton = bookingForm.querySelector(
+      'button[type="submit"], input[type="submit"]'
+    );
+
     const formData = new FormData(bookingForm);
 
-    const customerName = String(
-      formData.get("customerName") || ""
-    ).trim();
+    const booking = {
+      customerName: String(
+        formData.get("customerName") || ""
+      ).trim(),
 
-    const phone = String(
-      formData.get("phone") || ""
-    ).trim();
+      phone: String(formData.get("phone") || "").trim(),
 
-    const service = String(
-      formData.get("service") || ""
-    ).trim();
+      service: String(formData.get("service") || "").trim(),
 
-    const address = String(
-      formData.get("address") || ""
-    ).trim();
+      address: String(formData.get("address") || "").trim(),
 
-    const details = String(
-      formData.get("details") || ""
-    ).trim();
-
-    const showMessage = (message, color = "#183b2e") => {
-      if (formMessage) {
-        formMessage.textContent = message;
-        formMessage.style.color = color;
-      }
+      details: String(formData.get("details") || "").trim()
     };
 
-    if (!customerName || !phone || !service || !address) {
-      showMessage("Please fill in all required fields.", "#b42318");
+    if (
+      !booking.customerName ||
+      !booking.phone ||
+      !booking.service ||
+      !booking.address
+    ) {
+      showBookingMessage(
+        "Please fill in all required fields.",
+        "#b42318"
+      );
       return;
     }
 
-    const normalizedPhone = phone.replace(/[\s()-]/g, "");
+    const normalizedPhone = booking.phone.replace(/[\s()-]/g, "");
 
     if (!/^(?:\+91)?[6-9]\d{9}$/.test(normalizedPhone)) {
-      showMessage(
+      showBookingMessage(
         "Please enter a valid 10-digit Indian mobile number.",
         "#b42318"
       );
@@ -137,35 +149,77 @@ if (bookingForm) {
       return;
     }
 
-    if (!/^91\d{10}$/.test(FIXMATE_WHATSAPP_NUMBER)) {
-      showMessage(
-        "WhatsApp booking is not configured yet. Please set the FixMate WhatsApp number in script.js.",
+    if (!/^91[6-9][0-9]{9}$/.test(FIXMATE_WHATSAPP_NUMBER)) {
+      showBookingMessage(
+        "Please configure the FixMate WhatsApp number in script.js.",
         "#b42318"
       );
       return;
     }
 
-    const message = [
-      "Hello FixMate! I would like to request a home service.",
-      "",
-      `Name: ${customerName}`,
-      `Customer phone: ${normalizedPhone}`,
-      `Service: ${service}`,
-      `Address: ${address}`,
-      `Issue details: ${details || "Not provided"}`,
-      "",
-      "Please contact me to confirm availability and pricing."
-    ].join("\n");
+    booking.phone = normalizedPhone;
 
-    const whatsappURL =
-      `https://wa.me/${FIXMATE_WHATSAPP_NUMBER}` +
-      `?text=${encodeURIComponent(message)}`;
+    if (submitButton) submitButton.disabled = true;
 
-    showMessage(
-      "Opening WhatsApp with your booking details. Please review and send the message to complete your request."
-    );
+    showBookingMessage("Submitting your booking securely...");
 
-    window.open(whatsappURL, "_blank", "noopener,noreferrer");
+    try {
+      // First, save the booking to MongoDB through the backend.
+      const response = await fetch(FIXMATE_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(booking)
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.success) {
+        throw new Error(
+          result.message || "Could not save your booking."
+        );
+      }
+
+      // Only open WhatsApp after the backend confirms the save.
+      const whatsappMessage = [
+        "Hello FixMate! I have submitted a home service booking.",
+        "",
+        `Booking ID: ${result.bookingId || "Submitted"}`,
+        `Name: ${booking.customerName}`,
+        `Customer phone: ${booking.phone}`,
+        `Service: ${booking.service}`,
+        `Address: ${booking.address}`,
+        `Issue details: ${booking.details || "Not provided"}`,
+        "",
+        "Please contact me to confirm availability and pricing."
+      ].join("\n");
+
+      const whatsappURL =
+        `https://wa.me/${FIXMATE_WHATSAPP_NUMBER}` +
+        `?text=${encodeURIComponent(whatsappMessage)}`;
+
+      showBookingMessage(
+        "Booking saved successfully! Opening WhatsApp. Please review and send the message to complete your WhatsApp request."
+      );
+
+      window.open(
+        whatsappURL,
+        "_blank",
+        "noopener,noreferrer"
+      );
+    } catch (error) {
+      console.error("FixMate booking error:", error);
+
+      showBookingMessage(
+        error.message.includes("Failed to fetch")
+          ? "Cannot connect to FixMate server. Make sure MongoDB is connected and the backend is running on port 5000."
+          : error.message,
+        "#b42318"
+      );
+    } finally {
+      if (submitButton) submitButton.disabled = false;
+    }
   });
 }
 
