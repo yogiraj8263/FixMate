@@ -223,9 +223,9 @@ if (bookingForm) {
   });
 }
 
-// =====================================
+
 // FIXMATE - CURRENT YEAR
-// =====================================
+
 
 const currentYear = document.querySelector("#currentYear");
 
