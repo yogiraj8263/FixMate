@@ -5,110 +5,419 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#10271f">
+  <meta name="description" content="FixMate business console for managing home service bookings.">
   <title>FixMate | Admin Dashboard</title>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --green: #183b2e;
+      --green-dark: #10271f;
       --green-light: #e8f1eb;
       --bg: #f5f7f4;
       --text: #17251d;
       --muted: #778178;
       --border: #e6eae5;
       --white: #fff;
+      --red: #b42318;
     }
+
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       background: var(--bg);
       color: var(--text);
       font-family: "DM Sans", sans-serif;
     }
+
     button, input, select { font: inherit; }
     button { cursor: pointer; }
-    .layout { min-height: 100vh; display: flex; }
+
+    .layout {
+      min-height: 100vh;
+      display: flex;
+    }
+
     aside {
-      width: 245px; flex-shrink: 0; background: #10271f; color: white;
-      padding: 30px 19px; display: flex; flex-direction: column;
+      width: 250px;
+      flex-shrink: 0;
+      background: var(--green-dark);
+      color: white;
+      padding: 30px 18px;
+      display: flex;
+      flex-direction: column;
     }
-    .brand { font: 800 25px Manrope, sans-serif; letter-spacing: -1px; padding: 0 12px; }
+
+    .brand {
+      font: 800 27px Manrope, sans-serif;
+      letter-spacing: -1.2px;
+      padding: 0 12px;
+    }
+
     .brand span { color: #a9d2b6; }
+
+    .brand small {
+      display: block;
+      margin-top: 5px;
+      color: #9eb5a5;
+      font: 500 10px "DM Sans", sans-serif;
+      letter-spacing: 2px;
+    }
+
     .side-label {
-      margin: 43px 12px 12px; color: #91a59a; font-size: 10px;
-      letter-spacing: 2px; font-weight: 700;
+      margin: 43px 12px 12px;
+      color: #91a59a;
+      font-size: 10px;
+      letter-spacing: 2px;
+      font-weight: 700;
     }
+
     .nav-item {
-      padding: 13px 14px; border-radius: 10px; color: #d5e0d8;
-      font-size: 13px; margin: 3px 0;
+      display: block;
+      padding: 14px;
+      border-radius: 11px;
+      color: #d5e0d8;
+      font-size: 13px;
+      margin: 3px 0;
     }
-    .nav-item.active { background: #294638; color: white; }
+
+    .nav-item.active {
+      background: #294638;
+      color: white;
+    }
+
     .side-note {
-      margin-top: auto; background: #1b382b; padding: 17px;
-      border-radius: 13px; color: #d7e6dc; font-size: 12px; line-height: 1.7;
+      margin-top: auto;
+      background: #1b382b;
+      padding: 17px;
+      border-radius: 13px;
+      color: #d7e6dc;
+      font-size: 12px;
+      line-height: 1.8;
     }
-    main { flex: 1; min-width: 0; padding: 34px clamp(18px, 4vw, 55px); }
-    .topbar { display:flex; justify-content:space-between; align-items:center; gap:16px; margin-bottom:32px; }
-    .eyebrow { color:var(--muted); font-size:11px; font-weight:700; letter-spacing:1.7px; text-transform:uppercase; }
-    h1 { font:800 clamp(25px, 3vw, 34px) Manrope,sans-serif; letter-spacing:-1.2px; margin:8px 0; }
-    .sub { color:var(--muted); font-size:13px; }
-    .live { display:flex; align-items:center; gap:8px; border:1px solid var(--border); background:white; border-radius:30px; padding:10px 13px; font-size:12px; white-space:nowrap; }
-    .dot { width:8px; height:8px; border-radius:50%; background:#3d9a61; }
-    .stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:15px; margin-bottom:28px; }
-    .stat { background:white; border:1px solid var(--border); padding:21px; border-radius:15px; }
-    .stat-label { color:var(--muted); font-size:12px; }
-    .stat-value { font:800 30px Manrope,sans-serif; margin-top:13px; letter-spacing:-1px; }
-    .stat-foot { font-size:11px; color:var(--muted); margin-top:6px; }
-    .panel { background:white; border:1px solid var(--border); border-radius:16px; overflow:hidden; }
-    .panel-head { padding:23px; display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap; border-bottom:1px solid var(--border); }
-    h2 { font:800 17px Manrope,sans-serif; margin:0 0 5px; }
-    .tools { display:flex; gap:9px; flex-wrap:wrap; }
-    input, select { background:white; border:1px solid var(--border); padding:11px 12px; border-radius:9px; outline:none; color:var(--text); font-size:12px; max-width:100%; }
-    input:focus, select:focus { border-color:#7ba68b; }
-    .refresh { border:0; border-radius:9px; padding:11px 14px; background:var(--green); color:white; font-size:12px; font-weight:700; }
-    .table-wrap { overflow-x:auto; }
-    table { width:100%; border-collapse:collapse; min-width:850px; text-align:left; }
-    th { padding:14px 19px; background:#fafbf9; color:var(--muted); font-size:10px; letter-spacing:1px; text-transform:uppercase; }
-    td { padding:17px 19px; border-top:1px solid #eef0ed; font-size:12px; vertical-align:top; }
-    .customer { font-weight:700; font-size:13px; }
-    .secondary { color:var(--muted); margin-top:5px; line-height:1.5; max-width:230px; overflow-wrap:anywhere; }
-    .status { display:inline-block; padding:6px 9px; border-radius:30px; font-size:10px; font-weight:700; white-space:nowrap; }
-    .Pending { background:#fff1d9; color:#98600b; }
-    .Confirmed { background:#e6efff; color:#2859a6; }
-    .Completed { background:#e4f5e9; color:#287447; }
-    .Cancelled { background:#fde8e7; color:#b33b34; }
-    .status-select { min-width:125px; padding:8px; }
-    .message { padding:35px 20px; text-align:center; color:var(--muted); font-size:13px; line-height:1.7; }
-    .error { color:#b42318; }
-    .foot { padding:17px 22px; border-top:1px solid var(--border); font-size:11px; color:var(--muted); }
-    @media(max-width:1000px) {
-      .stats { grid-template-columns:repeat(2,minmax(0,1fr)); }
-      aside { width:200px; }
+
+    main {
+      flex: 1;
+      min-width: 0;
+      padding: 34px clamp(18px, 4vw, 55px);
     }
-    @media(max-width:650px) {
-      .layout { display:block; }
-      aside { width:100%; padding:18px; }
-      .brand { padding:0; }
-      .side-label, .nav-item, .side-note { display:none; }
-      main { padding:25px 15px; }
-      .topbar { align-items:flex-start; }
-      .stats { gap:10px; }
-      .stat { padding:15px; }
-      .stat-value { font-size:25px; }
-      .panel-head { padding:17px; }
-      .tools { width:100%; }
-      .tools input { flex:1; min-width:120px; }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .eyebrow {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.7px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font: 800 clamp(25px, 3vw, 36px) Manrope, sans-serif;
+      letter-spacing: -1.2px;
+      margin: 8px 0;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .live {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border);
+      background: white;
+      border-radius: 30px;
+      padding: 11px 15px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #3d9a61;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 28px;
+    }
+
+    .stat {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 22px;
+      border-radius: 15px;
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .stat-value {
+      font: 800 30px Manrope, sans-serif;
+      margin-top: 13px;
+      letter-spacing: -1px;
+    }
+
+    .stat-foot {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .panel {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .panel-head {
+      padding: 23px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      border-bottom: 1px solid var(--border);
+    }
+
+    h2 {
+      font: 800 18px Manrope, sans-serif;
+      margin: 0 0 5px;
+    }
+
+    .tools {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    input, select {
+      background: white;
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 9px;
+      outline: none;
+      color: var(--text);
+      font-size: 12px;
+      max-width: 100%;
+    }
+
+    input:focus, select:focus {
+      border-color: #7ba68b;
+      box-shadow: 0 0 0 3px #183b2e12;
+    }
+
+    .refresh, .logout {
+      border: 0;
+      border-radius: 9px;
+      padding: 12px 15px;
+      background: var(--green);
+      color: white;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .logout {
+      background: #fbe9e7;
+      color: #a52a22;
+    }
+
+    .table-wrap { overflow-x: auto; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 850px;
+      text-align: left;
+    }
+
+    th {
+      padding: 15px 19px;
+      background: #fafbf9;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    td {
+      padding: 17px 19px;
+      border-top: 1px solid #eef0ed;
+      font-size: 12px;
+      vertical-align: top;
+    }
+
+    .customer {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .secondary {
+      color: var(--muted);
+      margin-top: 5px;
+      line-height: 1.5;
+      max-width: 250px;
+      overflow-wrap: anywhere;
+    }
+
+    .status-select { min-width: 125px; padding: 9px; }
+
+    .message {
+      padding: 35px 20px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .error { color: var(--red); }
+
+    .foot {
+      padding: 17px 22px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .hidden { display: none !important; }
+
+    /* Login screen */
+
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--green-dark);
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: white;
+      padding: 34px;
+      border-radius: 20px;
+      box-shadow: 0 25px 80px #0003;
+    }
+
+    .login-brand {
+      font: 800 30px Manrope, sans-serif;
+      letter-spacing: -1px;
+      color: var(--green);
+    }
+
+    .login-brand span { color: #72a482; }
+
+    .login-kicker {
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 2px;
+      margin-top: 7px;
+    }
+
+    .login-card h2 {
+      font-size: 25px;
+      margin-top: 28px;
+    }
+
+    .login-card label {
+      display: block;
+      margin: 19px 0 7px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 14px;
+      font-size: 13px;
+    }
+
+    .login-submit {
+      width: 100%;
+      margin-top: 23px;
+      padding: 14px;
+      background: var(--green);
+      color: white;
+      border: 0;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .login-submit:disabled, .refresh:disabled {
+      opacity: .65;
+      cursor: wait;
+    }
+
+    .login-message {
+      min-height: 20px;
+      color: var(--red);
+      font-size: 12px;
+      line-height: 1.6;
+      margin-top: 14px;
+    }
+
+    @media (max-width: 1000px) {
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      aside { width: 210px; }
+    }
+
+    @media (max-width: 650px) {
+      .layout { display: block; }
+      aside { width: 100%; padding: 18px; }
+      .brand { padding: 0; }
+      .side-label, .nav-item, .side-note { display: none; }
+      main { padding: 25px 15px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .stats { gap: 10px; }
+      .stat { padding: 15px; }
+      .stat-value { font-size: 25px; }
+      .panel-head { padding: 17px; }
+      .tools { width: 100%; }
+      .tools input { flex: 1; min-width: 120px; }
+      .tools select { flex: 1; }
+      .login-card { padding: 25px; }
     }
   </style>
 </head>
+
 <body>
+
 <div class="layout">
   <aside>
-    <div class="brand">Fix<span>Mate</span><small style="font:500 10px 'DM Sans';color:#9eb5a5;letter-spacing:2px;display:block;margin-top:6px">BUSINESS CONSOLE</small></div>
+    <div class="brand">
+      Fix<span>Mate</span>
+      <small>BUSINESS CONSOLE</small>
+    </div>
+
     <div class="side-label">WORKSPACE</div>
     <div class="nav-item active">▦ &nbsp; Overview & Bookings</div>
     <div class="nav-item">◷ &nbsp; Booking Management</div>
     <div class="nav-item">✓ &nbsp; Service Operations</div>
+
     <div class="side-note">
       <strong>FixMate Operations</strong><br>
       Manage customer requests and keep your service operations organized.
@@ -122,164 +431,464 @@
         <h1>Good work starts here.</h1>
         <div class="sub">Manage your customer bookings in one place.</div>
       </div>
-      <div class="live"><span class="dot"></span> Admin workspace</div>
+
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <div class="live"><span class="dot"></span> Admin workspace</div>
+        <button class="logout" id="logoutButton" type="button">Sign out</button>
+      </div>
     </div>
 
     <section class="stats">
-      <div class="stat"><div class="stat-label">Total bookings</div><div class="stat-value" id="total">—</div><div class="stat-foot">All booking records</div></div>
-      <div class="stat"><div class="stat-label">Pending</div><div class="stat-value" id="pending">—</div><div class="stat-foot">Awaiting action</div></div>
-      <div class="stat"><div class="stat-label">Confirmed</div><div class="stat-value" id="confirmed">—</div><div class="stat-foot">Scheduled requests</div></div>
-      <div class="stat"><div class="stat-label">Completed</div><div class="stat-value" id="completed">—</div><div class="stat-foot">Finished jobs</div></div>
+      <div class="stat">
+        <div class="stat-label">Total bookings</div>
+        <div class="stat-value" id="total">—</div>
+        <div class="stat-foot">All booking records</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Pending</div>
+        <div class="stat-value" id="pending">—</div>
+        <div class="stat-foot">Awaiting action</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Confirmed</div>
+        <div class="stat-value" id="confirmed">—</div>
+        <div class="stat-foot">Scheduled requests</div>
+      </div>
+
+      <div class="stat">
+        <div class="stat-label">Completed</div>
+        <div class="stat-value" id="completed">—</div>
+        <div class="stat-foot">Finished jobs</div>
+      </div>
     </section>
 
     <section class="panel">
       <div class="panel-head">
-        <div><h2>Customer bookings</h2><div class="sub">View and manage incoming service requests.</div></div>
+        <div>
+          <h2>Customer bookings</h2>
+          <div class="sub">View and manage incoming service requests.</div>
+        </div>
+
         <div class="tools">
-          <input id="search" type="search" placeholder="Search name or phone..." aria-label="Search bookings">
+          <input id="search" type="search"
+            placeholder="Search name or phone..."
+            aria-label="Search bookings">
+
           <select id="filter" aria-label="Filter by status">
             <option value="">All statuses</option>
-            <option>Pending</option><option>Confirmed</option>
-            <option>Completed</option><option>Cancelled</option>
+            <option value="Pending">Pending</option>
+            <option value="Confirmed">Confirmed</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
           </select>
+
           <button class="refresh" id="refresh" type="button">↻ Refresh</button>
         </div>
       </div>
+
       <div class="table-wrap">
         <table>
-          <thead><tr><th>Customer</th><th>Service</th><th>Address / Details</th><th>Created</th><th>Status</th></tr></thead>
-          <tbody id="bookingRows"><tr><td colspan="5"><div class="message">Loading bookings…</div></td></tr></tbody>
+          <thead>
+            <tr>
+              <th>Customer</th>
+              <th>Service</th>
+              <th>Address / Details</th>
+              <th>Created</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+
+          <tbody id="bookingRows">
+            <tr>
+              <td colspan="5">
+                <div class="message">Checking admin session...</div>
+              </td>
+            </tr>
+          </tbody>
         </table>
       </div>
-      <div class="foot" id="resultCount">Connecting to FixMate backend…</div>
+
+      <div class="foot" id="resultCount">Connecting to FixMate backend...</div>
     </section>
   </main>
+</div>
+
+<!-- Admin login overlay -->
+<div class="login-overlay hidden" id="adminLoginOverlay">
+  <form class="login-card" id="adminLoginForm">
+    <div class="login-brand">Fix<span>Mate</span></div>
+    <div class="login-kicker">SECURE BUSINESS CONSOLE</div>
+
+    <h2>Welcome back</h2>
+    <p class="sub">Sign in to manage customer bookings.</p>
+
+    <label for="adminEmail">Admin email</label>
+    <input id="adminEmail" type="email"
+      autocomplete="username"
+      placeholder="Enter admin email" required>
+
+    <label for="adminPassword">Password</label>
+    <input id="adminPassword" type="password"
+      autocomplete="current-password"
+      placeholder="Enter admin password" required>
+
+    <button class="login-submit" id="adminLoginButton" type="submit">
+      Sign in securely
+    </button>
+
+    <div class="login-message" id="adminLoginMessage" role="alert"></div>
+  </form>
 </div>
 
 <script>
 "use strict";
 
-// Local development backend. For production, change this to your deployed API URL.
+/*
+  Local development API.
+  When deploying, replace with your real HTTPS backend URL.
+*/
 const API_BASE = "http://localhost:5000";
+const TOKEN_KEY = "fixmateAdminToken";
+
+let adminToken = sessionStorage.getItem(TOKEN_KEY) || "";
 let bookings = [];
 
 const rows = document.querySelector("#bookingRows");
 const search = document.querySelector("#search");
 const filter = document.querySelector("#filter");
+const loginOverlay = document.querySelector("#adminLoginOverlay");
+const loginForm = document.querySelector("#adminLoginForm");
+const loginMessage = document.querySelector("#adminLoginMessage");
+const loginButton = document.querySelector("#adminLoginButton");
 
 function safeText(value) {
   return String(value ?? "").replace(/[&<>"']/g, character => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;",
-    '"': "&quot;", "'": "&#39;"
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
   })[character]);
 }
 
 function formatDate(value) {
   if (!value) return "—";
+
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "—" :
-    date.toLocaleString("en-IN", {
-      day: "2-digit", month: "short", year: "numeric",
-      hour: "2-digit", minute: "2-digit"
-    });
+
+  if (Number.isNaN(date.getTime())) return "—";
+
+  return date.toLocaleString("en-IN", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
+}
+
+function showMessage(message, isError = false) {
+  rows.innerHTML = `
+    <tr>
+      <td colspan="5">
+        <div class="message ${isError ? "error" : ""}">
+          ${safeText(message)}
+        </div>
+      </td>
+    </tr>
+  `;
 }
 
 function updateStats() {
   document.querySelector("#total").textContent = bookings.length;
+
   document.querySelector("#pending").textContent =
-    bookings.filter(b => b.status === "Pending").length;
+    bookings.filter(item => item.status === "Pending").length;
+
   document.querySelector("#confirmed").textContent =
-    bookings.filter(b => b.status === "Confirmed").length;
+    bookings.filter(item => item.status === "Confirmed").length;
+
   document.querySelector("#completed").textContent =
-    bookings.filter(b => b.status === "Completed").length;
+    bookings.filter(item => item.status === "Completed").length;
+}
+
+function resetStats() {
+  ["total", "pending", "confirmed", "completed"].forEach(id => {
+    document.querySelector("#" + id).textContent = "—";
+  });
+}
+
+function showLogin(message = "") {
+  loginMessage.textContent = message;
+  loginOverlay.classList.remove("hidden");
+  document.querySelector("#adminEmail").focus();
+}
+
+function hideLogin() {
+  loginOverlay.classList.add("hidden");
+  loginMessage.textContent = "";
+  loginForm.reset();
+}
+
+function logoutAdmin(message = "") {
+  adminToken = "";
+  sessionStorage.removeItem(TOKEN_KEY);
+  bookings = [];
+  resetStats();
+
+  showMessage("Please sign in to view bookings.");
+  document.querySelector("#resultCount").textContent =
+    "Admin authentication required.";
+
+  showLogin(message);
 }
 
 function renderBookings() {
   const term = search.value.trim().toLowerCase();
-  const status = filter.value;
-  const visible = bookings.filter(b => {
+  const selectedStatus = filter.value;
+
+  const visible = bookings.filter(booking => {
     const searchable = [
-      b.customerName, b.phone, b.service, b.address, b.details, b._id
+      booking.customerName,
+      booking.phone,
+      booking.service,
+      booking.address,
+      booking.details,
+      booking._id
     ].join(" ").toLowerCase();
-    return searchable.includes(term) && (!status || b.status === status);
+
+    return searchable.includes(term) &&
+      (!selectedStatus || booking.status === selectedStatus);
   });
 
-  if (!visible.length) {
-    rows.innerHTML = '<tr><td colspan="5"><div class="message">No bookings found. New customer requests will appear here after they are saved.</div></td></tr>';
+  if (visible.length === 0) {
+    rows.innerHTML = `
+      <tr>
+        <td colspan="5">
+          <div class="message">
+            No bookings found. New customer requests will appear here.
+          </div>
+        </td>
+      </tr>
+    `;
   } else {
-    rows.innerHTML = visible.map(b => {
-      const currentStatus = ["Pending", "Confirmed", "Completed", "Cancelled"].includes(b.status)
-        ? b.status : "Pending";
-      return `<tr>
-        <td><div class="customer">${safeText(b.customerName)}</div>
-            <div class="secondary">${safeText(b.phone)}</div>
-            <div class="secondary">ID: ${safeText(String(b._id || "").slice(-8))}</div></td>
-        <td><strong>${safeText(b.service)}</strong></td>
-        <td><div>${safeText(b.address)}</div>
-            <div class="secondary">${safeText(b.details || "No extra details")}</div></td>
-        <td>${safeText(formatDate(b.createdAt))}</td>
-        <td><select class="status-select" data-id="${safeText(b._id)}" aria-label="Update booking status">
-          ${["Pending", "Confirmed", "Completed", "Cancelled"].map(s =>
-            `<option value="${s}" ${s === currentStatus ? "selected" : ""}>${s}</option>`
-          ).join("")}
-        </select></td>
-      </tr>`;
+    rows.innerHTML = visible.map(booking => {
+      const status = [
+        "Pending", "Confirmed", "Completed", "Cancelled"
+      ].includes(booking.status) ? booking.status : "Pending";
+
+      const id = safeText(booking._id);
+
+      return `
+        <tr>
+          <td>
+            <div class="customer">${safeText(booking.customerName)}</div>
+            <div class="secondary">${safeText(booking.phone)}</div>
+            <div class="secondary">
+              ID: ${safeText(String(booking._id || "").slice(-8))}
+            </div>
+          </td>
+
+          <td><strong>${safeText(booking.service)}</strong></td>
+
+          <td>
+            <div>${safeText(booking.address)}</div>
+            <div class="secondary">
+              ${safeText(booking.details || "No extra details")}
+            </div>
+          </td>
+
+          <td>${safeText(formatDate(booking.createdAt))}</td>
+
+          <td>
+            <select class="status-select"
+              data-id="${id}"
+              aria-label="Update booking status">
+              ${["Pending", "Confirmed", "Completed", "Cancelled"]
+                .map(option => `
+                  <option value="${option}"
+                    ${option === status ? "selected" : ""}>
+                    ${option}
+                  </option>
+                `).join("")}
+            </select>
+          </td>
+        </tr>
+      `;
     }).join("");
   }
+
   document.querySelector("#resultCount").textContent =
     `Showing ${visible.length} of ${bookings.length} bookings`;
 }
 
-async function loadBookings() {
-  rows.innerHTML = '<tr><td colspan="5"><div class="message">Loading bookings…</div></td></tr>';
+async function apiRequest(path, options = {}) {
+  const headers = {
+    ...(options.headers || {}),
+    Authorization: `Bearer ${adminToken}`
+  };
+
+  const response = await fetch(`${API_BASE}${path}`, {
+    ...options,
+    headers
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (response.status === 401 || response.status === 403) {
+    logoutAdmin(
+      data.message || "Your session has expired. Please sign in again."
+    );
+    throw new Error("AUTH_REQUIRED");
+  }
+
+  if (!response.ok || data.success !== true) {
+    throw new Error(data.message || `Request failed (${response.status}).`);
+  }
+
+  return data;
+}
+
+loginForm.addEventListener("submit", async event => {
+  event.preventDefault();
+
+  const email = document.querySelector("#adminEmail").value.trim();
+  const password = document.querySelector("#adminPassword").value;
+
+  loginButton.disabled = true;
+  loginButton.textContent = "Signing in...";
+  loginMessage.textContent = "";
+
   try {
-    const response = await fetch(`${API_BASE}/api/bookings`);
+    const response = await fetch(`${API_BASE}/api/admin/login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password })
+    });
+
     const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.success || !Array.isArray(data.bookings)) {
-      throw new Error(data.message || "The backend booking-list endpoint is not ready yet.");
+
+    if (!response.ok || !data.success || !data.token) {
+      throw new Error(data.message || "Admin login failed.");
     }
+
+    adminToken = data.token;
+    sessionStorage.setItem(TOKEN_KEY, adminToken);
+
+    hideLogin();
+    await loadBookings();
+  } catch (error) {
+    console.error("Admin login error:", error);
+
+    loginMessage.textContent =
+      error.message === "Failed to fetch"
+        ? "Cannot connect to backend. Check that your server is running on port 5000."
+        : error.message;
+  } finally {
+    loginButton.disabled = false;
+    loginButton.textContent = "Sign in securely";
+  }
+});
+
+async function loadBookings() {
+  if (!adminToken) {
+    showLogin();
+    return;
+  }
+
+  showMessage("Loading bookings...");
+  document.querySelector("#refresh").disabled = true;
+
+  try {
+    const data = await apiRequest("/api/bookings");
+
+    if (!Array.isArray(data.bookings)) {
+      throw new Error("The backend returned an invalid bookings list.");
+    }
+
     bookings = data.bookings;
     updateStats();
     renderBookings();
   } catch (error) {
-    console.error("FixMate dashboard error:", error);
-    rows.innerHTML = `<tr><td colspan="5"><div class="message error">${safeText(error.message)}<br><br>Check that your backend is running and provides GET /api/bookings.</div></td></tr>`;
+    if (error.message === "AUTH_REQUIRED") return;
+
+    console.error("Load bookings error:", error);
+
+    showMessage(
+      error.message === "Failed to fetch"
+        ? "Cannot connect to the backend. Ensure the server is running on port 5000."
+        : error.message,
+      true
+    );
+
     document.querySelector("#resultCount").textContent =
       "Could not load bookings from the backend.";
+  } finally {
+    document.querySelector("#refresh").disabled = false;
   }
 }
 
 async function updateBookingStatus(id, status) {
+  const allowedStatuses = [
+    "Pending", "Confirmed", "Completed", "Cancelled"
+  ];
+
+  if (!allowedStatuses.includes(status)) {
+    alert("Invalid booking status.");
+    return;
+  }
+
   try {
-    const response = await fetch(`${API_BASE}/api/bookings/${encodeURIComponent(id)}/status`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status })
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok || !data.success) {
-      throw new Error(data.message || "Status update endpoint is not ready yet.");
+    const data = await apiRequest(
+      `/api/bookings/${encodeURIComponent(id)}/status`,
+      {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status })
+      }
+    );
+
+    const index = bookings.findIndex(item => item._id === id);
+
+    if (index !== -1 && data.booking) {
+      bookings[index] = data.booking;
     }
-    const index = bookings.findIndex(b => b._id === id);
-    if (index !== -1) bookings[index] = data.booking || { ...bookings[index], status };
+
     updateStats();
     renderBookings();
   } catch (error) {
-    alert("Could not update status: " + error.message);
+    if (error.message === "AUTH_REQUIRED") return;
+
+    alert("Could not update booking status: " + error.message);
     await loadBookings();
   }
 }
 
 rows.addEventListener("change", event => {
   const select = event.target.closest("select[data-id]");
-  if (select) updateBookingStatus(select.dataset.id, select.value);
+
+  if (select) {
+    updateBookingStatus(select.dataset.id, select.value);
+  }
 });
 
 search.addEventListener("input", renderBookings);
 filter.addEventListener("change", renderBookings);
+
 document.querySelector("#refresh").addEventListener("click", loadBookings);
 
-loadBookings();
+document.querySelector("#logoutButton").addEventListener("click", () => {
+  logoutAdmin("You have been signed out.");
+});
+
+if (adminToken) {
+  loadBookings();
+} else {
+  showLogin();
+}
 </script>
+
 </body>
 </html>
