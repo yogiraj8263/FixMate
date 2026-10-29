@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#10271f">
-  <meta name="description" content="FixMate business console for managing home service bookings.">
-  <title>FixMate | Admin Dashboard</title>
+  <meta name="description" content="FixMate secure business console for managing customer service bookings.">
+  <title>FixMate | Admin Console</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -35,37 +35,123 @@
 
     button, input, select { font: inherit; }
     button { cursor: pointer; }
+    button:disabled { opacity: .6; cursor: wait; }
 
-    .layout {
+    [hidden] { display: none !important; }
+
+    .login-screen {
       min-height: 100vh;
-      display: flex;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: var(--green-dark);
     }
 
+    .login-card {
+      width: 100%;
+      max-width: 525px;
+      padding: clamp(26px, 5vw, 42px);
+      border-radius: 25px;
+      background: white;
+      box-shadow: 0 25px 70px #0002;
+    }
+
+    .brand {
+      font: 800 36px Manrope, sans-serif;
+      letter-spacing: -1.8px;
+      color: var(--green-dark);
+    }
+
+    .brand span { color: #77a88a; }
+
+    .brand-sub {
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 10px;
+      letter-spacing: 2.4px;
+    }
+
+    .login-card h1 {
+      margin: 38px 0 8px;
+      font: 800 29px Manrope, sans-serif;
+      letter-spacing: -1px;
+    }
+
+    .sub {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .field { margin-top: 23px; }
+
+    .field label {
+      display: block;
+      margin-bottom: 9px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input, select {
+      width: 100%;
+      min-width: 0;
+      padding: 13px 14px;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      background: white;
+      color: var(--text);
+      outline: none;
+      font-size: 13px;
+    }
+
+    input:focus, select:focus {
+      border-color: #79a88a;
+      box-shadow: 0 0 0 3px #79a88a20;
+    }
+
+    .primary-btn {
+      width: 100%;
+      margin-top: 27px;
+      padding: 15px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--green);
+      color: white;
+      font-weight: 700;
+      transition: background .2s;
+    }
+
+    .primary-btn:hover, .refresh:hover { background: #28533e; }
+
+    .feedback {
+      min-height: 22px;
+      margin-top: 15px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .feedback.error { color: var(--red); }
+    .feedback.success { color: #287447; }
+
+    .layout { min-height: 100vh; display: flex; }
+
     aside {
-      width: 250px;
+      width: 245px;
       flex-shrink: 0;
       background: var(--green-dark);
       color: white;
-      padding: 30px 18px;
+      padding: 30px 19px;
       display: flex;
       flex-direction: column;
     }
 
-    .brand {
-      font: 800 27px Manrope, sans-serif;
-      letter-spacing: -1.2px;
+    .side-brand {
       padding: 0 12px;
+      font: 800 25px Manrope, sans-serif;
+      letter-spacing: -1px;
     }
 
-    .brand span { color: #a9d2b6; }
-
-    .brand small {
-      display: block;
-      margin-top: 5px;
-      color: #9eb5a5;
-      font: 500 10px "DM Sans", sans-serif;
-      letter-spacing: 2px;
-    }
+    .side-brand span { color: #a9d2b6; }
 
     .side-label {
       margin: 43px 12px 12px;
@@ -77,17 +163,18 @@
 
     .nav-item {
       display: block;
-      padding: 14px;
-      border-radius: 11px;
+      width: 100%;
+      padding: 13px 14px;
+      border: 0;
+      border-radius: 10px;
+      background: transparent;
       color: #d5e0d8;
       font-size: 13px;
+      text-align: left;
       margin: 3px 0;
     }
 
-    .nav-item.active {
-      background: #294638;
-      color: white;
-    }
+    .nav-item.active { background: #294638; color: white; }
 
     .side-note {
       margin-top: auto;
@@ -122,15 +209,14 @@
     }
 
     h1 {
-      font: 800 clamp(25px, 3vw, 36px) Manrope, sans-serif;
+      font: 800 clamp(25px, 3vw, 34px) Manrope, sans-serif;
       letter-spacing: -1.2px;
       margin: 8px 0;
     }
 
-    .sub {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.6;
+    h2 {
+      font: 800 17px Manrope, sans-serif;
+      margin: 0 0 5px;
     }
 
     .live {
@@ -140,7 +226,7 @@
       border: 1px solid var(--border);
       background: white;
       border-radius: 30px;
-      padding: 11px 15px;
+      padding: 10px 13px;
       font-size: 12px;
       white-space: nowrap;
     }
@@ -162,14 +248,11 @@
     .stat {
       background: white;
       border: 1px solid var(--border);
-      padding: 22px;
+      padding: 21px;
       border-radius: 15px;
     }
 
-    .stat-label {
-      color: var(--muted);
-      font-size: 12px;
-    }
+    .stat-label { color: var(--muted); font-size: 12px; }
 
     .stat-value {
       font: 800 30px Manrope, sans-serif;
@@ -177,11 +260,7 @@
       letter-spacing: -1px;
     }
 
-    .stat-foot {
-      font-size: 11px;
-      color: var(--muted);
-      margin-top: 6px;
-    }
+    .stat-foot { font-size: 11px; color: var(--muted); margin-top: 6px; }
 
     .panel {
       background: white;
@@ -200,37 +279,15 @@
       border-bottom: 1px solid var(--border);
     }
 
-    h2 {
-      font: 800 18px Manrope, sans-serif;
-      margin: 0 0 5px;
-    }
+    .tools { display: flex; gap: 9px; flex-wrap: wrap; }
 
-    .tools {
-      display: flex;
-      gap: 9px;
-      flex-wrap: wrap;
-    }
-
-    input, select {
-      background: white;
-      border: 1px solid var(--border);
-      padding: 12px;
-      border-radius: 9px;
-      outline: none;
-      color: var(--text);
-      font-size: 12px;
-      max-width: 100%;
-    }
-
-    input:focus, select:focus {
-      border-color: #7ba68b;
-      box-shadow: 0 0 0 3px #183b2e12;
-    }
+    .tools input { width: 185px; }
+    .tools select { width: 135px; }
 
     .refresh, .logout {
       border: 0;
       border-radius: 9px;
-      padding: 12px 15px;
+      padding: 11px 14px;
       background: var(--green);
       color: white;
       font-size: 12px;
@@ -239,8 +296,10 @@
 
     .logout {
       background: #fbe9e7;
-      color: #a52a22;
+      color: #a22d26;
     }
+
+    .logout:hover { background: #f5d7d3; }
 
     .table-wrap { overflow-x: auto; }
 
@@ -252,7 +311,7 @@
     }
 
     th {
-      padding: 15px 19px;
+      padding: 14px 19px;
       background: #fafbf9;
       color: var(--muted);
       font-size: 10px;
@@ -267,27 +326,38 @@
       vertical-align: top;
     }
 
-    .customer {
-      font-weight: 700;
-      font-size: 13px;
-    }
+    .customer { font-weight: 700; font-size: 13px; }
 
     .secondary {
       color: var(--muted);
       margin-top: 5px;
       line-height: 1.5;
-      max-width: 250px;
+      max-width: 230px;
       overflow-wrap: anywhere;
     }
 
-    .status-select { min-width: 125px; padding: 9px; }
+    .status {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 30px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .Pending { background: #fff1d9; color: #98600b; }
+    .Confirmed { background: #e6efff; color: #2859a6; }
+    .Completed { background: #e4f5e9; color: #287447; }
+    .Cancelled { background: #fde8e7; color: #b33b34; }
+
+    .status-select { min-width: 125px; padding: 8px; }
 
     .message {
       padding: 35px 20px;
       text-align: center;
       color: var(--muted);
       font-size: 13px;
-      line-height: 1.8;
+      line-height: 1.7;
     }
 
     .error { color: var(--red); }
@@ -299,88 +369,7 @@
       color: var(--muted);
     }
 
-    .hidden { display: none !important; }
-
-    /* Login screen */
-
-    .login-overlay {
-      position: fixed;
-      inset: 0;
-      z-index: 9999;
-      background: var(--green-dark);
-      display: grid;
-      place-items: center;
-      padding: 20px;
-      overflow-y: auto;
-    }
-
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      background: white;
-      padding: 34px;
-      border-radius: 20px;
-      box-shadow: 0 25px 80px #0003;
-    }
-
-    .login-brand {
-      font: 800 30px Manrope, sans-serif;
-      letter-spacing: -1px;
-      color: var(--green);
-    }
-
-    .login-brand span { color: #72a482; }
-
-    .login-kicker {
-      color: var(--muted);
-      font-size: 10px;
-      letter-spacing: 2px;
-      margin-top: 7px;
-    }
-
-    .login-card h2 {
-      font-size: 25px;
-      margin-top: 28px;
-    }
-
-    .login-card label {
-      display: block;
-      margin: 19px 0 7px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .login-card input {
-      width: 100%;
-      padding: 14px;
-      font-size: 13px;
-    }
-
-    .login-submit {
-      width: 100%;
-      margin-top: 23px;
-      padding: 14px;
-      background: var(--green);
-      color: white;
-      border: 0;
-      border-radius: 10px;
-      font-weight: 700;
-    }
-
-    .login-submit:disabled, .refresh:disabled {
-      opacity: .65;
-      cursor: wait;
-    }
-
-    .login-message {
-      min-height: 20px;
-      color: var(--red);
-      font-size: 12px;
-      line-height: 1.6;
-      margin-top: 14px;
-    }
-
-    @media (max-width: 1000px) {
+    @media (max-width: 1100px) {
       .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       aside { width: 210px; }
     }
@@ -388,507 +377,607 @@
     @media (max-width: 650px) {
       .layout { display: block; }
       aside { width: 100%; padding: 18px; }
-      .brand { padding: 0; }
       .side-label, .nav-item, .side-note { display: none; }
       main { padding: 25px 15px; }
-      .topbar { align-items: flex-start; flex-direction: column; }
+      .topbar { align-items: flex-start; }
+      .live { font-size: 10px; }
       .stats { gap: 10px; }
       .stat { padding: 15px; }
       .stat-value { font-size: 25px; }
       .panel-head { padding: 17px; }
       .tools { width: 100%; }
-      .tools input { flex: 1; min-width: 120px; }
-      .tools select { flex: 1; }
-      .login-card { padding: 25px; }
+      .tools input { flex: 1; width: 100%; }
+      .tools select { flex: 1; width: 100%; }
     }
   </style>
 </head>
 
 <body>
 
-<div class="layout">
-  <aside>
-    <div class="brand">
-      Fix<span>Mate</span>
-      <small>BUSINESS CONSOLE</small>
-    </div>
+  <!-- ADMIN LOGIN -->
+  <section class="login-screen" id="loginScreen">
+    <form class="login-card" id="loginForm">
+      <div class="brand">Fix<span>Mate</span></div>
+      <div class="brand-sub">SECURE BUSINESS CONSOLE</div>
 
-    <div class="side-label">WORKSPACE</div>
-    <div class="nav-item active">▦ &nbsp; Overview & Bookings</div>
-    <div class="nav-item">◷ &nbsp; Booking Management</div>
-    <div class="nav-item">✓ &nbsp; Service Operations</div>
+      <h1>Welcome back</h1>
+      <p class="sub">Sign in to manage customer bookings.</p>
 
-    <div class="side-note">
-      <strong>FixMate Operations</strong><br>
-      Manage customer requests and keep your service operations organized.
-    </div>
-  </aside>
-
-  <main>
-    <div class="topbar">
-      <div>
-        <div class="eyebrow">Business overview</div>
-        <h1>Good work starts here.</h1>
-        <div class="sub">Manage your customer bookings in one place.</div>
+      <div class="field">
+        <label for="adminEmail">Admin email</label>
+        <input
+          id="adminEmail"
+          name="email"
+          type="email"
+          autocomplete="username"
+          placeholder="Enter your admin email"
+          required
+        >
       </div>
 
-      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-        <div class="live"><span class="dot"></span> Admin workspace</div>
+      <div class="field">
+        <label for="adminPassword">Password</label>
+        <input
+          id="adminPassword"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter your password"
+          required
+        >
+      </div>
+
+      <button class="primary-btn" id="loginButton" type="submit">
+        Sign in securely
+      </button>
+
+      <div class="feedback" id="loginMessage" role="status" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <!-- ADMIN DASHBOARD -->
+  <div class="layout" id="dashboard" hidden>
+    <aside>
+      <div class="side-brand">Fix<span>Mate</span></div>
+      <div style="font-size:10px;color:#9eb5a5;letter-spacing:2px;padding:6px 12px">
+        BUSINESS CONSOLE
+      </div>
+
+      <div class="side-label">WORKSPACE</div>
+
+      <button class="nav-item active" type="button" id="overviewButton">
+        ▦ &nbsp; Overview & Bookings
+      </button>
+
+      <button class="nav-item" type="button" id="bookingButton">
+        ◷ &nbsp; Booking Management
+      </button>
+
+      <button class="nav-item" type="button" id="operationsButton">
+        ✓ &nbsp; Service Operations
+      </button>
+
+      <div class="side-note">
+        <strong>FixMate Operations</strong><br>
+        Manage customer requests and keep your service operations organized.
+        <br><br>
         <button class="logout" id="logoutButton" type="button">Sign out</button>
       </div>
-    </div>
+    </aside>
 
-    <section class="stats">
-      <div class="stat">
-        <div class="stat-label">Total bookings</div>
-        <div class="stat-value" id="total">—</div>
-        <div class="stat-foot">All booking records</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-label">Pending</div>
-        <div class="stat-value" id="pending">—</div>
-        <div class="stat-foot">Awaiting action</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-label">Confirmed</div>
-        <div class="stat-value" id="confirmed">—</div>
-        <div class="stat-foot">Scheduled requests</div>
-      </div>
-
-      <div class="stat">
-        <div class="stat-label">Completed</div>
-        <div class="stat-value" id="completed">—</div>
-        <div class="stat-foot">Finished jobs</div>
-      </div>
-    </section>
-
-    <section class="panel">
-      <div class="panel-head">
+    <main>
+      <div class="topbar">
         <div>
-          <h2>Customer bookings</h2>
-          <div class="sub">View and manage incoming service requests.</div>
+          <div class="eyebrow">Business overview</div>
+          <h1>Good work starts here.</h1>
+          <div class="sub">Manage your customer bookings in one place.</div>
         </div>
 
-        <div class="tools">
-          <input id="search" type="search"
-            placeholder="Search name or phone..."
-            aria-label="Search bookings">
-
-          <select id="filter" aria-label="Filter by status">
-            <option value="">All statuses</option>
-            <option value="Pending">Pending</option>
-            <option value="Confirmed">Confirmed</option>
-            <option value="Completed">Completed</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-
-          <button class="refresh" id="refresh" type="button">↻ Refresh</button>
+        <div class="live">
+          <span class="dot"></span>
+          Admin workspace
         </div>
       </div>
 
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Customer</th>
-              <th>Service</th>
-              <th>Address / Details</th>
-              <th>Created</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-
-          <tbody id="bookingRows">
-            <tr>
-              <td colspan="5">
-                <div class="message">Checking admin session...</div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="foot" id="resultCount">Connecting to FixMate backend...</div>
-    </section>
-  </main>
-</div>
-
-<!-- Admin login overlay -->
-<div class="login-overlay hidden" id="adminLoginOverlay">
-  <form class="login-card" id="adminLoginForm">
-    <div class="login-brand">Fix<span>Mate</span></div>
-    <div class="login-kicker">SECURE BUSINESS CONSOLE</div>
-
-    <h2>Welcome back</h2>
-    <p class="sub">Sign in to manage customer bookings.</p>
-
-    <label for="adminEmail">Admin email</label>
-    <input id="adminEmail" type="email"
-      autocomplete="username"
-      placeholder="Enter admin email" required>
-
-    <label for="adminPassword">Password</label>
-    <input id="adminPassword" type="password"
-      autocomplete="current-password"
-      placeholder="Enter admin password" required>
-
-    <button class="login-submit" id="adminLoginButton" type="submit">
-      Sign in securely
-    </button>
-
-    <div class="login-message" id="adminLoginMessage" role="alert"></div>
-  </form>
-</div>
-
-<script>
-"use strict";
-
-/*
-  Local development API.
-  When deploying, replace with your real HTTPS backend URL.
-*/
-const API_BASE = "http://localhost:5000";
-const TOKEN_KEY = "fixmateAdminToken";
-
-let adminToken = sessionStorage.getItem(TOKEN_KEY) || "";
-let bookings = [];
-
-const rows = document.querySelector("#bookingRows");
-const search = document.querySelector("#search");
-const filter = document.querySelector("#filter");
-const loginOverlay = document.querySelector("#adminLoginOverlay");
-const loginForm = document.querySelector("#adminLoginForm");
-const loginMessage = document.querySelector("#adminLoginMessage");
-const loginButton = document.querySelector("#adminLoginButton");
-
-function safeText(value) {
-  return String(value ?? "").replace(/[&<>"']/g, character => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[character]);
-}
-
-function formatDate(value) {
-  if (!value) return "—";
-
-  const date = new Date(value);
-
-  if (Number.isNaN(date.getTime())) return "—";
-
-  return date.toLocaleString("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  });
-}
-
-function showMessage(message, isError = false) {
-  rows.innerHTML = `
-    <tr>
-      <td colspan="5">
-        <div class="message ${isError ? "error" : ""}">
-          ${safeText(message)}
+      <section class="stats">
+        <div class="stat">
+          <div class="stat-label">Total bookings</div>
+          <div class="stat-value" id="total">—</div>
+          <div class="stat-foot">All booking records</div>
         </div>
-      </td>
-    </tr>
-  `;
-}
 
-function updateStats() {
-  document.querySelector("#total").textContent = bookings.length;
+        <div class="stat">
+          <div class="stat-label">Pending</div>
+          <div class="stat-value" id="pending">—</div>
+          <div class="stat-foot">Awaiting action</div>
+        </div>
 
-  document.querySelector("#pending").textContent =
-    bookings.filter(item => item.status === "Pending").length;
+        <div class="stat">
+          <div class="stat-label">Confirmed</div>
+          <div class="stat-value" id="confirmed">—</div>
+          <div class="stat-foot">Scheduled requests</div>
+        </div>
 
-  document.querySelector("#confirmed").textContent =
-    bookings.filter(item => item.status === "Confirmed").length;
+        <div class="stat">
+          <div class="stat-label">Completed</div>
+          <div class="stat-value" id="completed">—</div>
+          <div class="stat-foot">Finished jobs</div>
+        </div>
+      </section>
 
-  document.querySelector("#completed").textContent =
-    bookings.filter(item => item.status === "Completed").length;
-}
-
-function resetStats() {
-  ["total", "pending", "confirmed", "completed"].forEach(id => {
-    document.querySelector("#" + id).textContent = "—";
-  });
-}
-
-function showLogin(message = "") {
-  loginMessage.textContent = message;
-  loginOverlay.classList.remove("hidden");
-  document.querySelector("#adminEmail").focus();
-}
-
-function hideLogin() {
-  loginOverlay.classList.add("hidden");
-  loginMessage.textContent = "";
-  loginForm.reset();
-}
-
-function logoutAdmin(message = "") {
-  adminToken = "";
-  sessionStorage.removeItem(TOKEN_KEY);
-  bookings = [];
-  resetStats();
-
-  showMessage("Please sign in to view bookings.");
-  document.querySelector("#resultCount").textContent =
-    "Admin authentication required.";
-
-  showLogin(message);
-}
-
-function renderBookings() {
-  const term = search.value.trim().toLowerCase();
-  const selectedStatus = filter.value;
-
-  const visible = bookings.filter(booking => {
-    const searchable = [
-      booking.customerName,
-      booking.phone,
-      booking.service,
-      booking.address,
-      booking.details,
-      booking._id
-    ].join(" ").toLowerCase();
-
-    return searchable.includes(term) &&
-      (!selectedStatus || booking.status === selectedStatus);
-  });
-
-  if (visible.length === 0) {
-    rows.innerHTML = `
-      <tr>
-        <td colspan="5">
-          <div class="message">
-            No bookings found. New customer requests will appear here.
+      <section class="panel">
+        <div class="panel-head">
+          <div>
+            <h2>Customer bookings</h2>
+            <div class="sub">View and manage incoming service requests.</div>
           </div>
-        </td>
-      </tr>
-    `;
-  } else {
-    rows.innerHTML = visible.map(booking => {
-      const status = [
-        "Pending", "Confirmed", "Completed", "Cancelled"
-      ].includes(booking.status) ? booking.status : "Pending";
 
-      const id = safeText(booking._id);
+          <div class="tools">
+            <input
+              id="search"
+              type="search"
+              placeholder="Search name or phone..."
+              aria-label="Search bookings"
+            >
 
-      return `
-        <tr>
-          <td>
-            <div class="customer">${safeText(booking.customerName)}</div>
-            <div class="secondary">${safeText(booking.phone)}</div>
-            <div class="secondary">
-              ID: ${safeText(String(booking._id || "").slice(-8))}
-            </div>
-          </td>
-
-          <td><strong>${safeText(booking.service)}</strong></td>
-
-          <td>
-            <div>${safeText(booking.address)}</div>
-            <div class="secondary">
-              ${safeText(booking.details || "No extra details")}
-            </div>
-          </td>
-
-          <td>${safeText(formatDate(booking.createdAt))}</td>
-
-          <td>
-            <select class="status-select"
-              data-id="${id}"
-              aria-label="Update booking status">
-              ${["Pending", "Confirmed", "Completed", "Cancelled"]
-                .map(option => `
-                  <option value="${option}"
-                    ${option === status ? "selected" : ""}>
-                    ${option}
-                  </option>
-                `).join("")}
+            <select id="filter" aria-label="Filter by status">
+              <option value="">All statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
             </select>
-          </td>
-        </tr>
-      `;
-    }).join("");
-  }
 
-  document.querySelector("#resultCount").textContent =
-    `Showing ${visible.length} of ${bookings.length} bookings`;
-}
+            <button class="refresh" id="refreshButton" type="button">
+              ↻ Refresh
+            </button>
+          </div>
+        </div>
 
-async function apiRequest(path, options = {}) {
-  const headers = {
-    ...(options.headers || {}),
-    Authorization: `Bearer ${adminToken}`
-  };
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Service</th>
+                <th>Address / Details</th>
+                <th>Created</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
-  const response = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers
-  });
+            <tbody id="bookingRows">
+              <tr>
+                <td colspan="5">
+                  <div class="message">Sign in to load bookings.</div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-  const data = await response.json().catch(() => ({}));
+        <div class="foot" id="resultCount">Admin authentication required.</div>
+      </section>
 
-  if (response.status === 401 || response.status === 403) {
-    logoutAdmin(
-      data.message || "Your session has expired. Please sign in again."
-    );
-    throw new Error("AUTH_REQUIRED");
-  }
+      <div class="feedback" id="dashboardMessage" role="status" aria-live="polite"></div>
+    </main>
+  </div>
 
-  if (!response.ok || data.success !== true) {
-    throw new Error(data.message || `Request failed (${response.status}).`);
-  }
+  <script>
+    "use strict";
 
-  return data;
-}
+    // Local development API. Change this after deploying your backend.
+    const API_BASE = "http://localhost:5000";
+    const TOKEN_KEY = "fixmate_admin_token";
 
-loginForm.addEventListener("submit", async event => {
-  event.preventDefault();
+    const loginScreen = document.querySelector("#loginScreen");
+    const dashboard = document.querySelector("#dashboard");
+    const loginForm = document.querySelector("#loginForm");
+    const loginButton = document.querySelector("#loginButton");
+    const loginMessage = document.querySelector("#loginMessage");
+    const dashboardMessage = document.querySelector("#dashboardMessage");
+    const rows = document.querySelector("#bookingRows");
+    const search = document.querySelector("#search");
+    const filter = document.querySelector("#filter");
 
-  const email = document.querySelector("#adminEmail").value.trim();
-  const password = document.querySelector("#adminPassword").value;
+    let bookings = [];
+    let currentToken = "";
+    let isLoading = false;
 
-  loginButton.disabled = true;
-  loginButton.textContent = "Signing in...";
-  loginMessage.textContent = "";
+    function setMessage(element, message, type = "") {
+      element.textContent = message;
+      element.className = "feedback" + (type ? " " + type : "");
+    }
 
-  try {
-    const response = await fetch(`${API_BASE}/api/admin/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password })
+    function getToken() {
+      return currentToken;
+    }
+
+    function showLogin(message = "") {
+      currentToken = "";
+      bookings = [];
+
+      // Do not keep an invalid or expired token.
+      try {
+        sessionStorage.removeItem(TOKEN_KEY);
+      } catch (_) {}
+
+      dashboard.hidden = true;
+      loginScreen.hidden = false;
+
+      document.querySelector("#total").textContent = "—";
+      document.querySelector("#pending").textContent = "—";
+      document.querySelector("#confirmed").textContent = "—";
+      document.querySelector("#completed").textContent = "—";
+
+      setMessage(loginMessage, message, message ? "error" : "");
+    }
+
+    function showDashboard() {
+      loginScreen.hidden = true;
+      dashboard.hidden = false;
+      setMessage(loginMessage, "");
+    }
+
+    function safeText(value) {
+      return String(value ?? "").replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function formatDate(value) {
+      if (!value) return "—";
+
+      const date = new Date(value);
+
+      if (Number.isNaN(date.getTime())) return "—";
+
+      return date.toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    async function apiRequest(path, options = {}) {
+      const token = getToken();
+
+      const headers = {
+        ...(options.body ? { "Content-Type": "application/json" } : {}),
+        ...(token ? { "Authorization": "Bearer " + token } : {}),
+        ...(options.headers || {})
+      };
+
+      let response;
+
+      try {
+        response = await fetch(API_BASE + path, {
+          ...options,
+          headers
+        });
+      } catch (_) {
+        throw new Error(
+          "Cannot connect to FixMate backend. Make sure the server is running on port 5000."
+        );
+      }
+
+      const data = await response.json().catch(() => ({}));
+
+      if (response.status === 401 || response.status === 403) {
+        const error = new Error(
+          data.message || "Your admin session is invalid. Please sign in again."
+        );
+        error.authError = true;
+        throw error;
+      }
+
+      if (!response.ok || data.success === false) {
+        throw new Error(data.message || "The request could not be completed.");
+      }
+
+      return data;
+    }
+
+    // ADMIN LOGIN
+    loginForm.addEventListener("submit", async event => {
+      event.preventDefault();
+
+      const email = document.querySelector("#adminEmail").value.trim();
+      const password = document.querySelector("#adminPassword").value;
+
+      if (!email || !password) {
+        setMessage(loginMessage, "Enter your admin email and password.", "error");
+        return;
+      }
+
+      loginButton.disabled = true;
+      loginButton.textContent = "Signing in...";
+      setMessage(loginMessage, "Verifying your credentials...");
+
+      try {
+        const response = await fetch(API_BASE + "/api/admin/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok || !data.success || !data.token) {
+          throw new Error(data.message || "Login failed. Check your credentials.");
+        }
+
+        currentToken = data.token;
+
+        // Session storage keeps the token for this browser tab session.
+        // The password itself is never saved.
+        try {
+          sessionStorage.setItem(TOKEN_KEY, currentToken);
+        } catch (_) {}
+
+        document.querySelector("#adminPassword").value = "";
+        showDashboard();
+
+        await loadBookings();
+      } catch (error) {
+        console.error("FixMate login error:", error);
+        setMessage(loginMessage, error.message || "Unable to sign in.", "error");
+      } finally {
+        loginButton.disabled = false;
+        loginButton.textContent = "Sign in securely";
+      }
     });
 
-    const data = await response.json().catch(() => ({}));
+    function updateStats() {
+      document.querySelector("#total").textContent = bookings.length;
 
-    if (!response.ok || !data.success || !data.token) {
-      throw new Error(data.message || "Admin login failed.");
+      document.querySelector("#pending").textContent =
+        bookings.filter(b => b.status === "Pending").length;
+
+      document.querySelector("#confirmed").textContent =
+        bookings.filter(b => b.status === "Confirmed").length;
+
+      document.querySelector("#completed").textContent =
+        bookings.filter(b => b.status === "Completed").length;
     }
 
-    adminToken = data.token;
-    sessionStorage.setItem(TOKEN_KEY, adminToken);
+    function renderBookings() {
+      const term = search.value.trim().toLowerCase();
+      const status = filter.value;
 
-    hideLogin();
-    await loadBookings();
-  } catch (error) {
-    console.error("Admin login error:", error);
+      const visible = bookings.filter(booking => {
+        const searchable = [
+          booking.customerName,
+          booking.phone,
+          booking.service,
+          booking.address,
+          booking.details,
+          booking._id
+        ].join(" ").toLowerCase();
 
-    loginMessage.textContent =
-      error.message === "Failed to fetch"
-        ? "Cannot connect to backend. Check that your server is running on port 5000."
-        : error.message;
-  } finally {
-    loginButton.disabled = false;
-    loginButton.textContent = "Sign in securely";
-  }
-});
+        return searchable.includes(term) &&
+          (!status || booking.status === status);
+      });
 
-async function loadBookings() {
-  if (!adminToken) {
-    showLogin();
-    return;
-  }
+      if (!visible.length) {
+        rows.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="message">
+                No bookings found. New customer requests will appear here after they are saved.
+              </div>
+            </td>
+          </tr>`;
+      } else {
+        rows.innerHTML = visible.map(booking => {
+          const validStatuses = [
+            "Pending",
+            "Confirmed",
+            "Completed",
+            "Cancelled"
+          ];
 
-  showMessage("Loading bookings...");
-  document.querySelector("#refresh").disabled = true;
+          const currentStatus = validStatuses.includes(booking.status)
+            ? booking.status
+            : "Pending";
 
-  try {
-    const data = await apiRequest("/api/bookings");
+          return `
+            <tr>
+              <td>
+                <div class="customer">${safeText(booking.customerName)}</div>
+                <div class="secondary">${safeText(booking.phone)}</div>
+                <div class="secondary">ID: ${safeText(String(booking._id || "").slice(-8))}</div>
+              </td>
 
-    if (!Array.isArray(data.bookings)) {
-      throw new Error("The backend returned an invalid bookings list.");
-    }
+              <td><strong>${safeText(booking.service)}</strong></td>
 
-    bookings = data.bookings;
-    updateStats();
-    renderBookings();
-  } catch (error) {
-    if (error.message === "AUTH_REQUIRED") return;
+              <td>
+                <div>${safeText(booking.address)}</div>
+                <div class="secondary">${safeText(booking.details || "No extra details")}</div>
+              </td>
 
-    console.error("Load bookings error:", error);
+              <td>${safeText(formatDate(booking.createdAt))}</td>
 
-    showMessage(
-      error.message === "Failed to fetch"
-        ? "Cannot connect to the backend. Ensure the server is running on port 5000."
-        : error.message,
-      true
-    );
-
-    document.querySelector("#resultCount").textContent =
-      "Could not load bookings from the backend.";
-  } finally {
-    document.querySelector("#refresh").disabled = false;
-  }
-}
-
-async function updateBookingStatus(id, status) {
-  const allowedStatuses = [
-    "Pending", "Confirmed", "Completed", "Cancelled"
-  ];
-
-  if (!allowedStatuses.includes(status)) {
-    alert("Invalid booking status.");
-    return;
-  }
-
-  try {
-    const data = await apiRequest(
-      `/api/bookings/${encodeURIComponent(id)}/status`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ status })
+              <td>
+                <select
+                  class="status-select"
+                  data-id="${safeText(booking._id)}"
+                  aria-label="Update booking status"
+                >
+                  ${validStatuses.map(statusOption => `
+                    <option
+                      value="${statusOption}"
+                      ${statusOption === currentStatus ? "selected" : ""}
+                    >${statusOption}</option>
+                  `).join("")}
+                </select>
+              </td>
+            </tr>`;
+        }).join("");
       }
-    );
 
-    const index = bookings.findIndex(item => item._id === id);
-
-    if (index !== -1 && data.booking) {
-      bookings[index] = data.booking;
+      document.querySelector("#resultCount").textContent =
+        `Showing ${visible.length} of ${bookings.length} bookings`;
     }
 
-    updateStats();
-    renderBookings();
-  } catch (error) {
-    if (error.message === "AUTH_REQUIRED") return;
+    // GET BOOKINGS — requires Authorization: Bearer <token>
+    async function loadBookings() {
+      if (!getToken() || isLoading) return;
 
-    alert("Could not update booking status: " + error.message);
-    await loadBookings();
-  }
-}
+      isLoading = true;
+      rows.innerHTML = `
+        <tr><td colspan="5"><div class="message">Loading bookings...</div></td></tr>`;
+      document.querySelector("#resultCount").textContent = "Connecting to FixMate backend...";
 
-rows.addEventListener("change", event => {
-  const select = event.target.closest("select[data-id]");
+      try {
+        const data = await apiRequest("/api/bookings");
 
-  if (select) {
-    updateBookingStatus(select.dataset.id, select.value);
-  }
-});
+        if (!Array.isArray(data.bookings)) {
+          throw new Error("The backend did not return a valid booking list.");
+        }
 
-search.addEventListener("input", renderBookings);
-filter.addEventListener("change", renderBookings);
+        bookings = data.bookings;
+        updateStats();
+        renderBookings();
+        setMessage(dashboardMessage, "");
+      } catch (error) {
+        console.error("FixMate dashboard error:", error);
 
-document.querySelector("#refresh").addEventListener("click", loadBookings);
+        if (error.authError) {
+          showLogin("Your session expired. Please sign in again.");
+          return;
+        }
 
-document.querySelector("#logoutButton").addEventListener("click", () => {
-  logoutAdmin("You have been signed out.");
-});
+        rows.innerHTML = `
+          <tr>
+            <td colspan="5">
+              <div class="message error">${safeText(error.message)}</div>
+            </td>
+          </tr>`;
 
-if (adminToken) {
-  loadBookings();
-} else {
-  showLogin();
-}
-</script>
+        document.querySelector("#resultCount").textContent =
+          "Could not load bookings from the backend.";
+      } finally {
+        isLoading = false;
+      }
+    }
 
+    // UPDATE BOOKING STATUS — admin token is required
+    async function updateBookingStatus(id, status, selectElement) {
+      const allowedStatuses = [
+        "Pending",
+        "Confirmed",
+        "Completed",
+        "Cancelled"
+      ];
+
+      if (!allowedStatuses.includes(status)) {
+        setMessage(dashboardMessage, "Invalid booking status.", "error");
+        return;
+      }
+
+      if (!id) {
+        setMessage(dashboardMessage, "Booking ID is missing.", "error");
+        return;
+      }
+
+      if (selectElement) selectElement.disabled = true;
+
+      try {
+        const data = await apiRequest(
+          "/api/bookings/" + encodeURIComponent(id) + "/status",
+          {
+            method: "PATCH",
+            body: JSON.stringify({ status })
+          }
+        );
+
+        const index = bookings.findIndex(booking => booking._id === id);
+
+        if (index !== -1) {
+          bookings[index] = data.booking || {
+            ...bookings[index],
+            status
+          };
+        }
+
+        updateStats();
+        renderBookings();
+        setMessage(dashboardMessage, "Booking status updated successfully.", "success");
+      } catch (error) {
+        console.error("FixMate status update error:", error);
+
+        if (error.authError) {
+          showLogin("Your session expired. Please sign in again.");
+          return;
+        }
+
+        setMessage(dashboardMessage, error.message, "error");
+        await loadBookings();
+      } finally {
+        if (selectElement) selectElement.disabled = false;
+      }
+    }
+
+    rows.addEventListener("change", event => {
+      const selectElement = event.target.closest("select[data-id]");
+
+      if (selectElement) {
+        updateBookingStatus(
+          selectElement.dataset.id,
+          selectElement.value,
+          selectElement
+        );
+      }
+    });
+
+    search.addEventListener("input", renderBookings);
+    filter.addEventListener("change", renderBookings);
+
+    document.querySelector("#refreshButton").addEventListener("click", loadBookings);
+
+    document.querySelector("#logoutButton").addEventListener("click", () => {
+      showLogin("You have been signed out.");
+      loginForm.reset();
+    });
+
+    document.querySelector("#overviewButton").addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+
+    document.querySelector("#bookingButton").addEventListener("click", () => {
+      document.querySelector(".panel").scrollIntoView({ behavior: "smooth" });
+    });
+
+    document.querySelector("#operationsButton").addEventListener("click", () => {
+      document.querySelector(".stats").scrollIntoView({ behavior: "smooth" });
+    });
+
+    // Restore the tab's existing login session, if one exists.
+    async function initializeDashboard() {
+      let savedToken = "";
+
+      try {
+        savedToken = sessionStorage.getItem(TOKEN_KEY) || "";
+      } catch (_) {}
+
+      if (!savedToken) {
+        showLogin();
+        return;
+      }
+
+      currentToken = savedToken;
+      showDashboard();
+      await loadBookings();
+    }
+
+    initializeDashboard();
+  </script>
 </body>
 </html>

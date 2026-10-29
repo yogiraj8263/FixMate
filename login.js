@@ -1,3 +1,6 @@
+
+"use strict";
+
 const loginForm = document.querySelector("#loginForm");
 const emailInput = document.querySelector("#email");
 const passwordInput = document.querySelector("#password");
@@ -7,86 +10,177 @@ const accountDialog = document.querySelector("#accountDialog");
 const accountForm = document.querySelector("#accountForm");
 const accountMessage = document.querySelector("#accountMessage");
 
-document.querySelector("#year").textContent = new Date().getFullYear();
+const yearElement = document.querySelector("#year");
+if (yearElement) {
+  yearElement.textContent = new Date().getFullYear();
+}
 
 function getAccounts() {
   try {
-    return JSON.parse(localStorage.getItem("fixmateAccounts") || "[]");
+    const accounts = JSON.parse(
+      localStorage.getItem("fixmateAccounts") || "[]"
+    );
+    return Array.isArray(accounts) ? accounts : [];
   } catch {
     return [];
   }
 }
 
-togglePassword.addEventListener("click", () => {
-  const show = passwordInput.type === "password";
-  passwordInput.type = show ? "text" : "password";
-  togglePassword.textContent = show ? "Hide" : "Show";
-});
+function showMessage(element, message, success = false) {
+  if (!element) return;
+  element.textContent = message;
+  element.style.color = success ? "#23663d" : "#b42318";
+}
 
-loginForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  loginMessage.textContent = "";
+// Show / hide password
+if (togglePassword && passwordInput) {
+  togglePassword.addEventListener("click", () => {
+    const show = passwordInput.type === "password";
+    passwordInput.type = show ? "text" : "password";
+    togglePassword.textContent = show ? "Hide" : "Show";
+  });
+}
 
-  if (!loginForm.reportValidity()) return;
+// Login
+if (loginForm) {
+  loginForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    showMessage(loginMessage, "");
 
-  const email = emailInput.value.trim().toLowerCase();
-  const password = passwordInput.value;
+    if (!loginForm.reportValidity()) return;
 
-  const account = getAccounts().find(
-    (item) => item.email === email && item.password === password
-  );
+    const email = emailInput.value.trim().toLowerCase();
+    const password = passwordInput.value;
 
-  if (!account) {
-    loginMessage.textContent =
-      "Account not found or password is incorrect. Create an account first, or continue as guest.";
-    return;
-  }
+    const account = getAccounts().find(
+      (item) =>
+        item.email?.trim().toLowerCase() === email &&
+        item.password === password
+    );
 
-  sessionStorage.setItem("fixmateUser", JSON.stringify({
-    name: account.name,
-    email: account.email
-  }));
+    if (!account) {
+      showMessage(
+        loginMessage,
+        "Account not found or password is incorrect. Create an account first, or continue as guest."
+      );
+      return;
+    }
 
-  window.location.href = "frontend/index.html";
-});
+    sessionStorage.setItem(
+      "fixmateUser",
+      JSON.stringify({
+        name: account.name,
+        email: account.email
+      })
+    );
 
-document.querySelector("#createAccount").addEventListener("click", () => {
-  accountMessage.textContent = "";
-  accountDialog.showModal();
-});
+    window.location.href = "frontend/index.html";
+  });
+}
 
-document.querySelector("#closeDialog").addEventListener("click", () => {
-  accountDialog.close();
-});
+// Forgot password — local development only
+const forgotPasswordButton = document.querySelector("#forgotPassword");
 
-accountDialog.addEventListener("click", (event) => {
-  if (event.target === accountDialog) accountDialog.close();
-});
+if (forgotPasswordButton) {
+  forgotPasswordButton.addEventListener("click", () => {
+    const email = emailInput.value.trim().toLowerCase();
 
-accountForm.addEventListener("submit", (event) => {
-  event.preventDefault();
-  accountMessage.textContent = "";
+    if (!email) {
+      showMessage(loginMessage, "Enter your registered email address first.");
+      emailInput.focus();
+      return;
+    }
 
-  if (!accountForm.reportValidity()) return;
+    const accounts = getAccounts();
+    const accountIndex = accounts.findIndex(
+      (item) => item.email?.trim().toLowerCase() === email
+    );
 
-  const name = document.querySelector("#newName").value.trim();
-  const email = document.querySelector("#newEmail").value.trim().toLowerCase();
-  const password = document.querySelector("#newPassword").value;
+    if (accountIndex === -1) {
+      showMessage(
+        loginMessage,
+        "No local account found for this email. Please create an account first."
+      );
+      return;
+    }
 
-  const accounts = getAccounts();
+    const newPassword = window.prompt(
+      "LOCAL TEST ONLY: Enter a new password (at least 8 characters). For a real website, use secure email verification."
+    );
 
-  if (accounts.some((item) => item.email === email)) {
-    accountMessage.textContent = "An account with this email already exists.";
-    return;
-  }
+    if (newPassword === null) return;
 
-  accounts.push({ name, email, password });
-  localStorage.setItem("fixmateAccounts", JSON.stringify(accounts));
+    if (newPassword.length < 8) {
+      showMessage(loginMessage, "Password must contain at least 8 characters.");
+      return;
+    }
 
-  sessionStorage.setItem("fixmateUser", JSON.stringify({ name, email }));
+    accounts[accountIndex].password = newPassword;
+    localStorage.setItem("fixmateAccounts", JSON.stringify(accounts));
 
-  accountMessage.style.color = "#23663d";
-  accountMessage.textContent = "Account created! Opening FixMate...";
+    passwordInput.value = "";
+    showMessage(
+      loginMessage,
+      "Password updated for this browser. You can now sign in.",
+      true
+    );
+  });
+}
 
-  window.location.href = "frontend/index.html";
-});
+// Open account creation dialog
+const createAccountButton = document.querySelector("#createAccount");
+
+if (createAccountButton && accountDialog) {
+  createAccountButton.addEventListener("click", () => {
+    showMessage(accountMessage, "");
+    accountDialog.showModal();
+  });
+}
+
+const closeDialogButton = document.querySelector("#closeDialog");
+
+if (closeDialogButton && accountDialog) {
+  closeDialogButton.addEventListener("click", () => {
+    accountDialog.close();
+  });
+
+  accountDialog.addEventListener("click", (event) => {
+    if (event.target === accountDialog) {
+      accountDialog.close();
+    }
+  });
+}
+
+// Create account
+if (accountForm) {
+  accountForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    showMessage(accountMessage, "");
+
+    if (!accountForm.reportValidity()) return;
+
+    const name = document.querySelector("#newName").value.trim();
+    const email = document.querySelector("#newEmail").value.trim().toLowerCase();
+    const password = document.querySelector("#newPassword").value;
+
+    if (password.length < 8) {
+      showMessage(accountMessage, "Password must contain at least 8 characters.");
+      return;
+    }
+
+    const accounts = getAccounts();
+
+    if (accounts.some((item) => item.email?.trim().toLowerCase() === email)) {
+      showMessage(accountMessage, "An account with this email already exists.");
+      return;
+    }
+
+    accounts.push({ name, email, password });
+    localStorage.setItem("fixmateAccounts", JSON.stringify(accounts));
+
+    sessionStorage.setItem("fixmateUser", JSON.stringify({ name, email }));
+
+    showMessage(accountMessage, "Account created! Opening FixMate...", true);
+    window.location.href = "frontend/index.html";
+  });
+}
