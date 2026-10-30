@@ -6,36 +6,47 @@ const emailInput = document.querySelector("#email");
 const passwordInput = document.querySelector("#password");
 const loginMessage = document.querySelector("#loginMessage");
 const togglePassword = document.querySelector("#togglePassword");
+
 const accountDialog = document.querySelector("#accountDialog");
 const accountForm = document.querySelector("#accountForm");
 const accountMessage = document.querySelector("#accountMessage");
 
+const forgotPasswordButton = document.querySelector("#forgotPassword");
+const createAccountButton = document.querySelector("#createAccount");
+const closeDialogButton = document.querySelector("#closeDialog");
+
 const yearElement = document.querySelector("#year");
+
 if (yearElement) {
   yearElement.textContent = new Date().getFullYear();
 }
 
+// Account storage
 function getAccounts() {
   try {
     const accounts = JSON.parse(
       localStorage.getItem("fixmateAccounts") || "[]"
     );
+
     return Array.isArray(accounts) ? accounts : [];
   } catch {
     return [];
   }
 }
 
+// Messages
 function showMessage(element, message, success = false) {
   if (!element) return;
+
   element.textContent = message;
-  element.style.color = success ? "#23663d" : "#b42318";
+  element.style.color = success ? "#a3bd9f" : "#f0a39a";
 }
 
-// Show / hide password
+// Password visibility
 if (togglePassword && passwordInput) {
   togglePassword.addEventListener("click", () => {
     const show = passwordInput.type === "password";
+
     passwordInput.type = show ? "text" : "password";
     togglePassword.textContent = show ? "Hide" : "Show";
   });
@@ -45,6 +56,7 @@ if (togglePassword && passwordInput) {
 if (loginForm) {
   loginForm.addEventListener("submit", (event) => {
     event.preventDefault();
+
     showMessage(loginMessage, "");
 
     if (!loginForm.reportValidity()) return;
@@ -61,7 +73,7 @@ if (loginForm) {
     if (!account) {
       showMessage(
         loginMessage,
-        "Account not found or password is incorrect. Create an account first, or continue as guest."
+        "Account not found or password is incorrect. Please try again."
       );
       return;
     }
@@ -78,20 +90,22 @@ if (loginForm) {
   });
 }
 
-// Forgot password — local development only
-const forgotPasswordButton = document.querySelector("#forgotPassword");
-
+// Forgot password - local testing only
 if (forgotPasswordButton) {
   forgotPasswordButton.addEventListener("click", () => {
     const email = emailInput.value.trim().toLowerCase();
 
     if (!email) {
-      showMessage(loginMessage, "Enter your registered email address first.");
+      showMessage(
+        loginMessage,
+        "Please enter your registered email address first."
+      );
       emailInput.focus();
       return;
     }
 
     const accounts = getAccounts();
+
     const accountIndex = accounts.findIndex(
       (item) => item.email?.trim().toLowerCase() === email
     );
@@ -99,46 +113,52 @@ if (forgotPasswordButton) {
     if (accountIndex === -1) {
       showMessage(
         loginMessage,
-        "No local account found for this email. Please create an account first."
+        "No account found with this email address."
       );
       return;
     }
 
     const newPassword = window.prompt(
-      "LOCAL TEST ONLY: Enter a new password (at least 8 characters). For a real website, use secure email verification."
+      "LOCAL TEST ONLY: Enter your new password (minimum 8 characters)."
     );
 
     if (newPassword === null) return;
 
     if (newPassword.length < 8) {
-      showMessage(loginMessage, "Password must contain at least 8 characters.");
+      showMessage(
+        loginMessage,
+        "Password must contain at least 8 characters."
+      );
       return;
     }
 
     accounts[accountIndex].password = newPassword;
-    localStorage.setItem("fixmateAccounts", JSON.stringify(accounts));
+
+    localStorage.setItem(
+      "fixmateAccounts",
+      JSON.stringify(accounts)
+    );
 
     passwordInput.value = "";
+
     showMessage(
       loginMessage,
-      "Password updated for this browser. You can now sign in.",
+      "Password updated. You can now sign in.",
       true
     );
   });
 }
 
-// Open account creation dialog
-const createAccountButton = document.querySelector("#createAccount");
-
+// Open create account dialog
 if (createAccountButton && accountDialog) {
   createAccountButton.addEventListener("click", () => {
     showMessage(accountMessage, "");
+    accountForm?.reset();
     accountDialog.showModal();
   });
 }
 
-const closeDialogButton = document.querySelector("#closeDialog");
-
+// Close dialog
 if (closeDialogButton && accountDialog) {
   closeDialogButton.addEventListener("click", () => {
     accountDialog.close();
@@ -155,6 +175,7 @@ if (closeDialogButton && accountDialog) {
 if (accountForm) {
   accountForm.addEventListener("submit", (event) => {
     event.preventDefault();
+
     showMessage(accountMessage, "");
 
     if (!accountForm.reportValidity()) return;
@@ -164,23 +185,49 @@ if (accountForm) {
     const password = document.querySelector("#newPassword").value;
 
     if (password.length < 8) {
-      showMessage(accountMessage, "Password must contain at least 8 characters.");
+      showMessage(
+        accountMessage,
+        "Password must contain at least 8 characters."
+      );
       return;
     }
 
     const accounts = getAccounts();
 
-    if (accounts.some((item) => item.email?.trim().toLowerCase() === email)) {
-      showMessage(accountMessage, "An account with this email already exists.");
+    const alreadyExists = accounts.some(
+      (item) => item.email?.trim().toLowerCase() === email
+    );
+
+    if (alreadyExists) {
+      showMessage(
+        accountMessage,
+        "An account with this email already exists."
+      );
       return;
     }
 
-    accounts.push({ name, email, password });
-    localStorage.setItem("fixmateAccounts", JSON.stringify(accounts));
+    accounts.push({
+      name,
+      email,
+      password
+    });
 
-    sessionStorage.setItem("fixmateUser", JSON.stringify({ name, email }));
+    localStorage.setItem(
+      "fixmateAccounts",
+      JSON.stringify(accounts)
+    );
 
-    showMessage(accountMessage, "Account created! Opening FixMate...", true);
+    sessionStorage.setItem(
+      "fixmateUser",
+      JSON.stringify({ name, email })
+    );
+
+    showMessage(
+      accountMessage,
+      "Account created! Opening FixMate...",
+      true
+    );
+
     window.location.href = "frontend/index.html";
   });
 }

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#10271f">
+  <meta name="theme-color" content="#111512">
   <title>Login | FixMate</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,47 +13,35 @@
 
   <link rel="stylesheet" href="style.css">
   <script src="login.js" defer></script>
-
-  <style>
-    .forgot-password {
-      display: block;
-      margin: 9px 0 18px auto;
-      padding: 0;
-      border: 0;
-      background: transparent;
-      color: #183b2e;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .forgot-password:hover {
-      text-decoration: underline;
-    }
-
-    .forgot-password:focus-visible {
-      outline: 2px solid #183b2e;
-      outline-offset: 4px;
-      border-radius: 3px;
-    }
-  </style>
 </head>
 
 <body>
   <main class="login-page">
+
     <section class="visual-panel">
+      <div class="visual-overlay"></div>
+
       <a class="brand" href="index.html">
         <span class="brand-symbol">F<span>+</span></span>
         <span class="brand-name">fixmate<small>HOME SERVICES</small></span>
       </a>
 
       <div class="visual-content">
-        <span class="eyebrow"><span class="dot"></span> YOUR HOME, IN GOOD HANDS</span>
+        <span class="eyebrow">
+          <span class="dot"></span>
+          YOUR HOME, IN GOOD HANDS
+        </span>
 
-        <h1>Home care,<br>made <span>beautifully</span><br>simple.</h1>
+        <h1>
+          Home care,<br>
+          made <span>beautifully</span><br>
+          simple.
+        </h1>
 
-        <p>One place for the little fixes, important repairs, and everyday care your home deserves.</p>
+        <p>
+          One place for the little fixes, important repairs,
+          and everyday care your home deserves.
+        </p>
 
         <div class="visual-note">
           <span class="note-icon">✦</span>
@@ -71,62 +59,80 @@
     </section>
 
     <section class="form-panel">
+
       <div class="mobile-brand">
         <span class="brand-symbol">F<span>+</span></span>
         <span class="brand-name">fixmate<small>HOME SERVICES</small></span>
       </div>
 
       <div class="login-card">
-        <div class="welcome-tag">WELCOME TO FIXMATE</div>
 
-        <h2>Good to see you<span>.</span></h2>
+        <div class="form-brand">FixMate</div>
+        <div class="welcome-tag">WELCOME BACK</div>
 
-        <p class="subtitle">Sign in to continue to your home care experience.</p>
+        <h2>Sign In To Continue</h2>
+
+        <p class="subtitle">
+          Enter your credentials to access your account
+          and experience thoughtful home care.
+        </p>
 
         <form id="loginForm">
+
           <div class="field">
-            <label for="email">Email address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-              autocomplete="email"
-              required
-            >
+            <label for="email">Email Address</label>
+            <div class="input-wrap">
+              <span class="input-icon">✉</span>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                placeholder="example@email.com"
+                autocomplete="email"
+                required
+              >
+            </div>
           </div>
 
           <div class="field">
             <div class="password-label">
               <label for="password">Password</label>
-              <button type="button" id="togglePassword" class="text-button">Show</button>
             </div>
 
-            <input
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Enter your password"
-              autocomplete="current-password"
-              required
-              minlength="6"
-            >
+            <div class="input-wrap">
+              <span class="input-icon">♙</span>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                minlength="6"
+                required
+              >
+              <button
+                type="button"
+                id="togglePassword"
+                class="text-button"
+              >Show</button>
+            </div>
           </div>
 
-          <!-- Forgot Password -->
           <button
             type="button"
             id="forgotPassword"
             class="forgot-password"
           >
-            Forgot password?
+            Forgot Password?
           </button>
 
           <p id="loginMessage" class="message" role="status" aria-live="polite"></p>
 
           <button class="primary-button" type="submit">
-            Sign in <span>↗</span>
+            <span>Sign In</span>
+            <span class="button-arrow">↗</span>
           </button>
+
         </form>
 
         <div class="separator">
@@ -140,25 +146,29 @@
         </a>
 
         <p class="signup-note">
-          New to FixMate?
+          Don't have an account?
           <button type="button" id="createAccount" class="text-button">
-            Create an account
+            Create Account
           </button>
         </p>
 
         <p class="security-note">
-          <span>✓</span> Your home care journey starts here.
+          <span>✓</span>
+          Your home care journey starts here.
         </p>
+
       </div>
 
       <footer class="page-footer">
         © <span id="year"></span> FixMate. All rights reserved.
       </footer>
+
     </section>
   </main>
 
   <dialog id="accountDialog" class="account-dialog">
     <form id="accountForm">
+
       <button
         type="button"
         id="closeDialog"
@@ -167,39 +177,44 @@
       >×</button>
 
       <div class="welcome-tag">JOIN FIXMATE</div>
-      <h2>Create account<span>.</span></h2>
+      <h2>Create Account<span>.</span></h2>
 
-      <p class="subtitle">Set up your details to get started.</p>
+      <p class="subtitle">
+        Set up your details to get started.
+      </p>
 
       <div class="field">
-        <label for="newName">Full name</label>
+        <label for="newName">Full Name</label>
         <input
           id="newName"
           name="newName"
           autocomplete="name"
+          placeholder="Your full name"
           required
         >
       </div>
 
       <div class="field">
-        <label for="newEmail">Email address</label>
+        <label for="newEmail">Email Address</label>
         <input
           id="newEmail"
           name="newEmail"
           type="email"
           autocomplete="email"
+          placeholder="example@email.com"
           required
         >
       </div>
 
       <div class="field">
-        <label for="newPassword">Create password (minimum 6 characters)</label>
+        <label for="newPassword">Create Password</label>
         <input
           id="newPassword"
           name="newPassword"
           type="password"
           minlength="6"
           autocomplete="new-password"
+          placeholder="Minimum 6 characters"
           required
         >
       </div>
@@ -207,13 +222,15 @@
       <p id="accountMessage" class="message" role="status" aria-live="polite"></p>
 
       <button class="primary-button" type="submit">
-        Create account <span>↗</span>
+        Create Account <span class="button-arrow">↗</span>
       </button>
 
       <p class="security-note">
         Demo only: account details are saved in this browser.
       </p>
+
     </form>
   </dialog>
+
 </body>
 </html>
